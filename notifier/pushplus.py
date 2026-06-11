@@ -27,21 +27,23 @@ def _send(title: str, content: str) -> bool:
     if not _TOKEN:
         print(f"[pushplus] TOKEN 未设置，仅打印:\n  {title}\n  {content}")
         return False
-    try:
-        resp = requests.post(
-            _API_URL,
-            json={"token": _TOKEN, "title": title,
-                  "content": content, "template": "html"},
-            timeout=_TIMEOUT,
-        )
-        data = resp.json()
-        if data.get("code") == 200:
-            return True
-        print(f"[pushplus] 推送失败: {data}")
-        return False
-    except Exception as exc:
-        print(f"[pushplus] 请求异常: {exc}")
-        return False
+    # try:
+    #     resp = requests.post(
+    #         _API_URL,
+    #         json={"token": _TOKEN, "title": title,
+    #               "content": content, "template": "html"},
+    #         timeout=_TIMEOUT,
+    #     )
+    #     data = resp.json()
+    #     if data.get("code") == 200:
+    #         return True
+    #     print(f"[pushplus] 推送失败: {data}")
+    #     return False
+    # except Exception as exc:
+    #     print(f"[pushplus] 请求异常: {exc}")
+    #     return False
+    print(f"[pushplus] 已暂停，如需恢复取消注释 _send 中的请求代码")
+    return False
 
 
 def notify_entry(

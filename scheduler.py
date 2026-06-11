@@ -23,7 +23,7 @@ load_dotenv(dotenv_path=Path(__file__).parent / ".env")
 
 from config import BTC_LIVE, ETH_LIVE
 from data.okx_feed import refresh_cache, load_cache
-from notifier.pushplus import notify_entry, notify_exit
+from notifier.fcm import notify_entry, notify_exit
 
 logging.basicConfig(
     level=logging.INFO,
