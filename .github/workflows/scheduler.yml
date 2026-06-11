@@ -32,13 +32,18 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      # 4. 运行信号检测（单次模式）
+      # 4. 写入 Firebase 服务账号密钥
+      - name: Create Firebase key file
+        run: echo '${{ secrets.FIREBASE_KEY_JSON }}' > firebase-key.json
+
+      # 5. 运行信号检测（单次模式）
       - name: Run scheduler
         env:
           PUSHPLUS_TOKEN: ${{ secrets.PUSHPLUS_TOKEN }}
+          FCM_DEVICE_TOKEN: ${{ secrets.FCM_DEVICE_TOKEN }}
         run: python scheduler.py --once
 
-      # 5. 把更新后的 signal_state.json 提交回 repo（状态持久化）
+      # 6. 把更新后的 signal_state.json 提交回 repo（状态持久化）
       - name: Commit signal state
         run: |
           git config user.name  "github-actions[bot]"
