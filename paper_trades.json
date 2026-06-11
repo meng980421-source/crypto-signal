@@ -1,0 +1,15 @@
+{
+  "summary": {
+    "start_date": "2026-06-11",
+    "end_date": "2026-06-16",
+    "initial_capital": 10000,
+    "current_capital": 10000,
+    "total_trades": 0,
+    "win_trades": 0,
+    "loss_trades": 0,
+    "win_rate": 0.0,
+    "total_pnl_pct": 0.0
+  },
+  "open_positions": [],
+  "closed_trades": []
+}

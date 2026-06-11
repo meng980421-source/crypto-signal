@@ -24,6 +24,7 @@ load_dotenv(dotenv_path=Path(__file__).parent / ".env")
 from config import BTC_LIVE, ETH_LIVE
 from data.okx_feed import refresh_cache, load_cache
 from notifier.fcm import notify_entry, notify_exit
+import paper_trading
 
 logging.basicConfig(
     level=logging.INFO,
@@ -115,6 +116,10 @@ def _run_signals_for(symbol: str, state: dict) -> None:
     else:
         check_since = last_bar + pd.Timedelta(minutes=1)
 
+    # Paper trading: 用本 bar 收盘价检查已有持仓
+    current_price = float(h15m.iloc[-1]["close"])
+    paper_trading.check_positions(symbol, current_price, current_bar.to_pydatetime())
+
     # 4. 跑回测（窗口内），提取新 bar 产生的信号
     recent   = h15m.tail(_WINDOW)
     h1_slice = h1[h1.index >= recent.index[0] - pd.Timedelta(hours=50)]
@@ -140,6 +145,11 @@ def _run_signals_for(symbol: str, state: dict) -> None:
                 "stop_price":  t.stop_price,
                 "tp_price":    t.tp_price,
             }
+            paper_trading.open_position(
+                symbol, t.direction,
+                t.entry_price, t.stop_price, t.tp_price,
+                str(t.entry_time),
+            )
 
     for t in sorted(new_exits, key=lambda x: x.exit_time):
         key = f"open_{t.direction}"
@@ -170,6 +180,7 @@ def job() -> None:
     state = _load_state()
     for symbol in CONFIGS:
         _run_signals_for(symbol, state)
+    paper_trading.sync_to_state(state)
     _save_state(state)
     log.info("──────── 信号检测完成 ────────")
 
