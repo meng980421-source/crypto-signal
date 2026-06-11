@@ -60,12 +60,22 @@ def _save_state(state: dict) -> None:
     STATE_FILE.write_text(json.dumps(state, default=str, indent=2, ensure_ascii=False))
 
 
+_HISTORY_MAX = 50
+
+
 def _sym_state(state: dict, symbol: str) -> dict:
     return state.setdefault(symbol, {
         "last_bar":   None,   # 最后处理过的 15m bar timestamp（ISO 字符串）
         "open_long":  None,   # {"entry_time", "entry_price", "stop_price", "tp_price"}
         "open_short": None,
     })
+
+
+def _append_history(state: dict, record: dict) -> None:
+    history = state.setdefault("history", [])
+    history.append(record)
+    if len(history) > _HISTORY_MAX:
+        state["history"] = history[-_HISTORY_MAX:]
 
 
 # ── 核心逻辑 ──────────────────────────────────────────────────────────────────
@@ -137,6 +147,17 @@ def _run_signals_for(symbol: str, state: dict) -> None:
             log.info(f"{lbl}: 离场 {t.direction} [{t.exit_reason}] "
                      f"{t.pnl_pct:+.2f}%")
             notify_exit(symbol, t.direction, t.exit_reason, t.pnl_pct)
+            _append_history(state, {
+                "symbol":      lbl,
+                "direction":   t.direction,
+                "entry_time":  str(ss[key]["entry_time"]),
+                "entry_price": ss[key]["entry_price"],
+                "stop_price":  ss[key]["stop_price"],
+                "tp_price":    ss[key]["tp_price"],
+                "exit_time":   str(t.exit_time),
+                "exit_reason": t.exit_reason,
+                "pnl_pct":     round(t.pnl_pct, 4),
+            })
             ss[key] = None
 
     ss["last_bar"] = str(current_bar)
