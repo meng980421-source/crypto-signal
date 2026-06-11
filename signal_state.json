@@ -1,12 +1,23 @@
 {
   "ETH/USDT:USDT": {
-    "last_bar": "2026-06-11 03:15:00+00:00",
+    "last_bar": "2026-06-11 06:00:00+00:00",
     "open_long": null,
     "open_short": null
   },
   "BTC/USDT:USDT": {
-    "last_bar": "2026-06-11 03:15:00+00:00",
+    "last_bar": "2026-06-11 06:00:00+00:00",
     "open_long": null,
     "open_short": null
+  },
+  "paper_trading": {
+    "start_date": "2026-06-11",
+    "end_date": "2026-06-16",
+    "initial_capital": 10000,
+    "current_capital": 10000,
+    "total_trades": 0,
+    "win_trades": 0,
+    "loss_trades": 0,
+    "win_rate": 0.0,
+    "total_pnl_pct": 0.0
   }
 }
